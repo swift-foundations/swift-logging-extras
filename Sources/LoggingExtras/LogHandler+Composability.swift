@@ -20,5 +20,5 @@ import Logging
 /// logger.info("Goes to both console and file")
 /// ```
 public func + (lhs: any LogHandler, rhs: any LogHandler) -> any LogHandler {
-  MultiplexLogHandler([lhs, rhs])
+    MultiplexLogHandler([lhs, rhs])
 }
