@@ -1,4 +1,4 @@
-// swift-tools-version:6.0
+// swift-tools-version: 6.3.1
 
 import Foundation
 import PackageDescription
@@ -13,24 +13,23 @@ extension Target.Dependency {
 
 extension Target.Dependency {
     static var dependencies: Self { .product(name: "Dependencies", package: "swift-dependencies") }
-    static var dependenciesMacros: Self { .product(name: "DependenciesMacros", package: "swift-dependencies") }
-    static var dependenciesTestSupport: Self { .product(name: "DependenciesTestSupport", package: "swift-dependencies") }
+    static var dependenciesTestSupport: Self { .product(name: "Dependencies Test Support", package: "swift-dependencies") }
     static var logging: Self { .product(name: "Logging", package: "swift-log") }
 }
 
 let package = Package(
     name: "swift-logging-extras",
     platforms: [
-      .iOS(.v13),
-      .macOS(.v10_15),
-      .tvOS(.v13),
-      .watchOS(.v6)
+      .iOS(.v26),
+      .macOS(.v26),
+      .tvOS(.v26),
+      .watchOS(.v26)
     ],
     products: [
         .library(name: .loggingExtras, targets: [.loggingExtras])
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.2"),
+        .package(url: "https://github.com/swift-foundations/swift-dependencies.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-log", from: "1.6.4")
     ],
     targets: [

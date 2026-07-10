@@ -2,14 +2,14 @@ import Dependencies
 import Foundation
 import Logging
 
-extension DependencyValues {
+extension Dependency.Values {
     public var logger: Logger {
         get { self[Logger.self] }
         set { self[Logger.self] = newValue }
     }
 }
 
-extension Logger: @retroactive TestDependencyKey {
+extension Logger: @retroactive Dependency.Key.Test {
     public static let testValue = Logger(label: ProcessInfo.processInfo.processName)
 }
 
