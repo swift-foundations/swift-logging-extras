@@ -6,11 +6,11 @@ import Testing
 
 @testable import LoggingExtras
 
-@Suite("README Verification")
-struct ReadmeVerificationTests {
+@Suite
+struct Test {
 
-    @Test("Quick Start Example (README lines 47-60)")
-    func quickStartExample() {
+    @Test
+    func `Quick Start Example (README lines 47-60)`() {
         struct MyFeature {
             @Dependency(\.logger) var logger
 
@@ -25,8 +25,8 @@ struct ReadmeVerificationTests {
         feature.doSomething()
     }
 
-    @Test("Basic Usage with Dependencies (README lines 68-81)")
-    func basicUsageExample() {
+    @Test
+    func `Basic Usage with Dependencies (README lines 68-81)`() {
         struct MyService {
             @Dependency(\.logger) var logger
 
@@ -41,8 +41,8 @@ struct ReadmeVerificationTests {
         service.performTask()
     }
 
-    @Test("Test Usage Example (README lines 88-101)")
-    func testUsageExample() async throws {
+    @Test
+    func `Test Usage Example (README lines 88-101)`() async throws {
         try await withDependencies { _ in
             // Logger is automatically set to test value
         } operation: {
@@ -51,8 +51,8 @@ struct ReadmeVerificationTests {
         }
     }
 
-    @Test("Custom Logger Configuration (README lines 108-121)")
-    func customLoggerExample() async throws {
+    @Test
+    func `Custom Logger Configuration (README lines 108-121)`() async throws {
         try await withDependencies {
             $0.logger = Logger(label: "com.example.myapp.feature")
         } operation: {
@@ -64,8 +64,8 @@ struct ReadmeVerificationTests {
         }
     }
 
-    @Test("Enhanced Logging with Metadata (README lines 128-144)")
-    func enhancedLoggingExample() {
+    @Test
+    func `Enhanced Logging with Metadata (README lines 128-144)`() {
         struct MyFeature {
             @Dependency(\.logger) var logger
 
@@ -83,8 +83,8 @@ struct ReadmeVerificationTests {
         feature.processUser(id: "12345")
     }
 
-    @Test("DependencyValues Extension (README lines 150-154)")
-    func dependencyValuesExtensionExample() {
+    @Test
+    func `Dependency Values Extension (README lines 150-154)`() {
         // Verify the dependency key exists
         @Dependency(\.logger) var logger
 
@@ -92,16 +92,16 @@ struct ReadmeVerificationTests {
         logger.info("Testing dependency values extension")
     }
 
-    @Test("Logger TestDependencyKey (README lines 160-164)")
-    func loggerTestDependencyKeyExample() {
+    @Test
+    func `Logger Test Dependency Key (README lines 160-164)`() {
         // Verify the test value is configured correctly
         let testLogger = Logger.testValue
 
         #expect(testLogger.label == ProcessInfo.processInfo.processName)
     }
 
-    @Test("Enhanced Logging Method Signature (README lines 170-180)")
-    func enhancedLoggingMethodExample() {
+    @Test
+    func `Enhanced Logging Method Signature (README lines 170-180)`() {
         @Dependency(\.logger) var logger
 
         // Test that the enhanced logging method exists and works

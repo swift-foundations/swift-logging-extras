@@ -11,11 +11,11 @@ import Testing
 
 @testable import LoggingExtras
 
-@Suite("ConsoleLogHandler Tests")
-struct ConsoleLogHandlerTests {
+@Suite
+struct Test {
 
-    @Test("ConsoleLogHandler formats levels correctly")
-    func logHandlerFormatsLevelsCorrectly() {
+    @Test
+    func `Console Log Handler formats levels correctly`() {
         let handler = ConsoleLogHandler(label: "test")
 
         let levels: [Logger.Level] = [.trace, .debug, .info, .notice, .warning, .error, .critical]
@@ -26,8 +26,8 @@ struct ConsoleLogHandlerTests {
         }
     }
 
-    @Test("ConsoleLogHandler initializes with correct defaults")
-    func logHandlerInitializesWithCorrectDefaults() {
+    @Test
+    func `Console Log Handler initializes with correct defaults`() {
         let handler = ConsoleLogHandler(label: "test-label")
 
         #expect(handler.logLevel == .info)
@@ -35,8 +35,8 @@ struct ConsoleLogHandlerTests {
         #expect(handler.metadata.isEmpty)
     }
 
-    @Test("ConsoleLogHandler initializes with custom values")
-    func logHandlerInitializesWithCustomValues() {
+    @Test
+    func `Console Log Handler initializes with custom values`() {
         let metadataProvider = Logger.MetadataProvider { ["custom": "value"] }
         let handler = ConsoleLogHandler(
             label: "custom-label",
@@ -48,8 +48,8 @@ struct ConsoleLogHandlerTests {
         #expect(handler.metadataProvider != nil)
     }
 
-    @Test("ConsoleLogHandler manages metadata correctly")
-    func logHandlerManagesMetadataCorrectly() {
+    @Test
+    func `Console Log Handler manages metadata correctly`() {
         var handler = ConsoleLogHandler(label: "test")
 
         #expect(handler.metadata.isEmpty)
@@ -65,8 +65,8 @@ struct ConsoleLogHandlerTests {
         #expect(handler.metadata.count == 1)
     }
 
-    @Test("DateFormatter log produces ISO8601 format")
-    func dateFormatterLogProducesISO8601Format() {
+    @Test
+    func `Date Formatter log produces ISO8601 format`() {
         let formatter = DateFormatter.log
         let date = Date(timeIntervalSince1970: 1234567890.123)
 
@@ -74,14 +74,14 @@ struct ConsoleLogHandlerTests {
         #expect(formatted == "2009-02-13T23:31:30.123Z")
     }
 
-    @Test("DateFormatter log uses UTC timezone")
-    func dateFormatterLogUsesUTCTimezone() {
+    @Test
+    func `Date Formatter log uses UTC timezone`() {
         let formatter = DateFormatter.log
         #expect(formatter.timeZone == TimeZone(secondsFromGMT: 0))
     }
 
-    @Test("DateFormatter log uses POSIX locale")
-    func dateFormatterLogUsesPOSIXLocale() {
+    @Test
+    func `Date Formatter log uses POSIX locale`() {
         let formatter = DateFormatter.log
         #expect(formatter.locale == Locale(identifier: "en_US_POSIX"))
     }

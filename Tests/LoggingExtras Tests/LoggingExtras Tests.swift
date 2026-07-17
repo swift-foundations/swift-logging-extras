@@ -5,9 +5,9 @@ import Testing
 @testable import LoggingExtras
 
 @Suite
-struct LoggingExtrasTests {
+struct `Logging Extras Tests` {
     @Test
-    func testLoggerDependency() async throws {
+    func `Logger Dependency`() async throws {
         try await withDependencies { _ in
             // Logger should be automatically set to test value
         } operation: {
@@ -25,7 +25,7 @@ struct LoggingExtrasTests {
     }
 
     @Test
-    func testCustomLogger() async throws {
+    func `Custom Logger`() async throws {
         try await withDependencies {
             $0.logger = Logger(label: "com.test.custom")
         } operation: {
@@ -37,7 +37,7 @@ struct LoggingExtrasTests {
     }
 
     @Test
-    func testEnhancedLogging() async throws {
+    func `Enhanced Logging`() async throws {
         try await withDependencies { _ in
             // Logger should be automatically set to test value
         } operation: {
@@ -56,7 +56,7 @@ struct LoggingExtrasTests {
     }
 
     @Test
-    func testLoggerLevels() async throws {
+    func `Logger Levels`() async throws {
         try await withDependencies { _ in
             // Logger should be automatically set to test value
         } operation: {
@@ -74,7 +74,7 @@ struct LoggingExtrasTests {
     }
 
     @Test
-    func testLoggerMetadata() async throws {
+    func `Logger Metadata`() async throws {
         try await withDependencies { _ in
             // Logger should be automatically set to test value
         } operation: {
