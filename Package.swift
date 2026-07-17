@@ -1,53 +1,89 @@
 // swift-tools-version: 6.3.3
 
-import Foundation
+// ===----------------------------------------------------------------------===//
+//
+// This source file is part of the swift-logger-handlers open source project
+//
+// Copyright (c) 2026 Coen ten Thije Boonkkamp and the swift-logger-handlers
+// project authors
+// Licensed under Apache License v2.0
+//
+// See LICENSE for license information
+//
+// ===----------------------------------------------------------------------===//
+
 import PackageDescription
 
-extension String {
-    static let loggingExtras: Self = "LoggingExtras"
-}
-
-extension Target.Dependency {
-    static var loggingExtras: Self { .target(name: .loggingExtras) }
-}
-
-extension Target.Dependency {
-    static var dependencies: Self { .product(name: "Dependencies", package: "swift-dependencies") }
-    static var dependenciesTestSupport: Self { .product(name: "Dependencies Test Support", package: "swift-dependencies") }
-    static var logging: Self { .product(name: "Logging", package: "swift-log") }
-}
-
 let package = Package(
-    name: "swift-logging-extras",
+    name: "swift-logger-handlers",
     platforms: [
-      .iOS(.v26),
-      .macOS(.v26),
-      .tvOS(.v26),
-      .watchOS(.v26)
+        .macOS(.v26),
+        .iOS(.v26),
+        .tvOS(.v26),
+        .watchOS(.v26),
+        .visionOS(.v26),
     ],
     products: [
-        .library(name: .loggingExtras, targets: [.loggingExtras])
+        .library(
+            name: "Logger Handlers",
+            targets: ["Logger Handlers"]
+        ),
+        .library(
+            name: "Logger Handlers Foundation Integration",
+            targets: ["Logger Handlers Foundation Integration"]
+        ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-foundations/swift-dependencies.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.6.4")
     ],
     targets: [
         .target(
-            name: .loggingExtras,
+            name: "Logger Handlers",
             dependencies: [
-                .dependencies,
-                .logging
+                .product(name: "Logging", package: "swift-log")
+            ]
+        ),
+        .target(
+            name: "Logger Handlers Foundation Integration",
+            dependencies: [
+                "Logger Handlers",
+                .product(name: "Logging", package: "swift-log"),
             ]
         ),
         .testTarget(
-            name: .loggingExtras.tests,
+            name: "Logger Handlers Tests",
             dependencies: [
-                .loggingExtras,
-                .dependenciesTestSupport
+                "Logger Handlers",
+                .product(name: "Logging", package: "swift-log"),
             ]
-        )
-    ]
+        ),
+        .testTarget(
+            name: "Logger Handlers Foundation Integration Tests",
+            dependencies: [
+                "Logger Handlers",
+                "Logger Handlers Foundation Integration",
+                .product(name: "Logging", package: "swift-log"),
+            ]
+        ),
+    ],
+    swiftLanguageModes: [.v6]
 )
 
-extension String { var tests: Self { self + " Tests" } }
+for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
+    let ecosystem: [SwiftSetting] = [
+        .strictMemorySafety(),
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+        .enableExperimentalFeature("LifetimeDependence"),
+        .enableExperimentalFeature("Lifetimes"),
+        .enableExperimentalFeature("SuppressedAssociatedTypes"),
+        .enableUpcomingFeature("InferIsolatedConformances"),
+        .enableUpcomingFeature("LifetimeDependence"),
+    ]
+
+    let package: [SwiftSetting] = []
+
+    target.swiftSettings = (target.swiftSettings ?? []) + ecosystem + package
+}

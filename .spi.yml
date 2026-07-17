@@ -1,5 +1,6 @@
 version: 1
 builder:
   configs:
-  - documentation_targets:
-    - LoggingExtras
+    - documentation_targets:
+        - Logger Handlers
+        - Logger Handlers Foundation Integration
