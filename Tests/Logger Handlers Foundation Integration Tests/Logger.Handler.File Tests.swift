@@ -54,6 +54,63 @@ extension `Logger.Handler.File Tests`.`Edge Case` {
             )
         }
     }
+
+    @Test
+    func `close flushes pending writes and releases the file handle`() throws {
+        let directory = FileManager.default.temporaryDirectory.appending(
+            path: UUID().uuidString
+        )
+        let url = directory.appending(path: "close.log")
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let handler = try Logger.Handler.File(label: "tests", url: url)
+        handler.log(
+            event: LogEvent(
+                level: .info,
+                message: "before close",
+                metadata: nil,
+                source: "tests",
+                file: "Tests.swift",
+                function: "test",
+                line: 1
+            )
+        )
+
+        try handler.close()
+
+        let output = try String(contentsOf: url, encoding: .utf8)
+        #expect(output.contains("before close"))
+    }
+
+    @Test
+    func `logging after close is dropped instead of crashing the process`() throws {
+        let directory = FileManager.default.temporaryDirectory.appending(
+            path: UUID().uuidString
+        )
+        let url = directory.appending(path: "post-close.log")
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let handler = try Logger.Handler.File(label: "tests", url: url)
+        try handler.close()
+
+        // Must not crash: before this fix, a write against an invalid/closed file
+        // descriptor went through `FileHandle.write(_:)`, which can raise an
+        // uncatchable Objective-C exception and take the whole process down.
+        handler.log(
+            event: LogEvent(
+                level: .info,
+                message: "after close",
+                metadata: nil,
+                source: "tests",
+                file: "Tests.swift",
+                function: "test",
+                line: 2
+            )
+        )
+
+        let output = try String(contentsOf: url, encoding: .utf8)
+        #expect(!output.contains("after close"))
+    }
 }
 
 extension `Logger.Handler.File Tests`.Integration {

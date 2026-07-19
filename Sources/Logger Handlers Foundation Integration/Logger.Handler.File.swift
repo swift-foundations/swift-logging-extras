@@ -78,7 +78,41 @@ extension Logger.Handler.File {
 
     public func log(event: LogEvent) {
         queue.sync {
-            handle.write(Data((line(for: event, at: Date()) + "\n").utf8))
+            do {
+                try handle.write(contentsOf: Data((line(for: event, at: Date()) + "\n").utf8))
+            } catch {
+                // File-based logging is best-effort: a write failure (for example, a
+                // closed or invalid file descriptor after `close()`) must never crash
+                // the process. `FileHandle.write(_:)` could raise an uncatchable
+                // Objective-C exception on failure; the throwing `write(contentsOf:)`
+                // API lets us define the failure policy explicitly instead: drop the
+                // record.
+            }
+        }
+    }
+
+    /// Flushes buffered data to disk and closes the underlying file handle.
+    ///
+    /// Call this when the handler is no longer needed to release the file descriptor
+    /// deterministically, rather than relying on the handle being closed when the last
+    /// reference is deallocated. Safe to call at most once; a second call throws
+    /// because the handle is already closed.
+    ///
+    /// Calling ``log(event:)`` after `close()` is safe: per the error policy documented
+    /// there, the resulting write failure is caught and the record is dropped rather
+    /// than crashing.
+    ///
+    /// - Throws: ``CocoaError`` if the handle could not be flushed or closed.
+    public func close() throws(CocoaError) {
+        do {
+            try queue.sync {
+                try handle.synchronize()
+                try handle.close()
+            }
+        } catch let error as CocoaError {
+            throw error
+        } catch {
+            throw CocoaError(.fileWriteUnknown)
         }
     }
 
