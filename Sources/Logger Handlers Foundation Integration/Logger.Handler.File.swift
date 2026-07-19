@@ -45,7 +45,7 @@ extension Logger.Handler {
                 }
 
                 handle = try FileHandle(forWritingTo: url)
-                _ = handle.seekToEndOfFile()
+                _ = try handle.seekToEnd()
             } catch let error as CocoaError {
                 throw error
             } catch {

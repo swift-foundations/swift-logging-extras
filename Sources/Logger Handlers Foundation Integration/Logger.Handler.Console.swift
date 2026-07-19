@@ -57,7 +57,18 @@ extension Logger.Handler.Console {
 
     public func log(event: LogEvent) {
         queue.sync {
-            FileHandle.standardError.write(Data((line(for: event, at: Date()) + "\n").utf8))
+            do {
+                try FileHandle.standardError.write(
+                    contentsOf: Data((line(for: event, at: Date()) + "\n").utf8)
+                )
+            } catch {
+                // Console logging is best-effort: a write failure (for example, a
+                // closed or invalid file descriptor after `close()`) must never crash
+                // the process. `FileHandle.write(_:)` could raise an uncatchable
+                // Objective-C exception on failure; the throwing `write(contentsOf:)`
+                // API lets us define the failure policy explicitly instead: drop the
+                // record.
+            }
         }
     }
 
